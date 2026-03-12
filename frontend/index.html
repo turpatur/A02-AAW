@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Event Demo</title>
+</head>
+
+<body>
+
+<h2>Create Post</h2>
+
+<textarea id="content"></textarea>
+<br>
+<button onclick="sendPost()">Post</button>
+
+<script>
+async function sendPost() {
+
+  const content = document.getElementById("content").value;
+
+  await fetch("http://localhost:5000/post", {
+    method: "POST",
+    headers: {
+      "Content-Type":"application/json"
+    },
+    body: JSON.stringify({content})
+  });
+
+  alert("Post sent!");
+}
+</script>
+
+</body>
+</html>
