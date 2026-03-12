@@ -1,0 +1,43 @@
+services:
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  backend:
+    build: .
+    command: python -u backend/api.py
+    depends_on:
+      - rabbitmq
+    ports:
+      - "5000:5000"
+
+  logger_consumer:
+    build: .
+    command: python -u consumers/logger.py
+    depends_on:
+      - rabbitmq
+    restart: unless-stopped
+
+  wordcount_consumer:
+    build: .
+    command: python -u consumers/word_count.py
+    depends_on:
+      - rabbitmq
+    restart: unless-stopped
+
+  archive_consumer:
+    build: .
+    command: python -u consumers/archive.py
+    depends_on:
+      - rabbitmq
+    restart: unless-stopped
+
+  frontend:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html
